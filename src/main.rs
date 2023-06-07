@@ -1,7 +1,8 @@
-use std::process::{Command};
+use std::process::{Stdio, Command};
 use std::env::{ args, current_exe };
 use serde_json::{Value};
 use std::fs::read_to_string;
+use std::io::{ BufReader, BufRead, stdin };
 
 fn main() {
     let fadein_path = current_exe().unwrap();
@@ -9,7 +10,7 @@ fn main() {
     let args: Vec<String> = args().collect();
 
     let configuration_json: Value = serde_json::from_str(
-    read_to_string("./config.json")
+    read_to_string(format!("{}/config.json", fadein_parent))
         .expect("Could not read the configuration json.")
         .as_str()
     ).unwrap();
@@ -31,7 +32,7 @@ fn main() {
         _ => args[1].as_str()
     };
 
-    let _command = Command::new("./ffmpeg")
+    let mut command = Command::new(format!("{}/ffmpeg", fadein_parent))
         .args([
             "-loop", "1",
             "-i", format!("{}/thumbnail.png", fadein_parent).as_str(),
@@ -49,8 +50,24 @@ fn main() {
             "-y",
             format!("{}/output.mp4", fadein_parent).as_str()
         ])
-        .spawn()
-        .unwrap();
+        .stdout(Stdio::piped())
+        .spawn().unwrap();
+    
+    let stdout = command.stdout.take().unwrap();
+    let lines = BufReader::new(stdout).lines();
+    for line in lines {
+        println!("{}", line.unwrap());
+    }
+
+    loop {
+        let mut answer = String::new();
+    
+        stdin().read_line(&mut answer)
+          .ok()
+          .expect("Failed to read line");
+    
+        println!("{:?}", answer);
+      }
     // let process = Command::new("ffmpeg")
     //     .stdin(Stdio::piped())
     //     .spawn();
