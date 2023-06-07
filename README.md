@@ -6,3 +6,7 @@ Well, now you can...! 🐱
 # how it works
 
 drag and drop or run from command line either works
+
+# requirements
+
+ffmpeg (place in same location as sms-fadein executable)
