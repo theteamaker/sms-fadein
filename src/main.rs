@@ -2,7 +2,7 @@ use std::process::{Stdio, Command};
 use std::env::{ args, current_exe };
 use serde_json::{Value};
 use std::fs::read_to_string;
-use std::io::{ BufReader, BufRead, stdin };
+use std::io::{ BufReader, BufRead };
 
 fn main() {
     let fadein_path = current_exe().unwrap();
@@ -58,17 +58,4 @@ fn main() {
     for line in lines {
         println!("{}", line.unwrap());
     }
-
-    loop {
-        let mut answer = String::new();
-    
-        stdin().read_line(&mut answer)
-          .ok()
-          .expect("Failed to read line");
-    
-        println!("{:?}", answer);
-      }
-    // let process = Command::new("ffmpeg")
-    //     .stdin(Stdio::piped())
-    //     .spawn();
 }
