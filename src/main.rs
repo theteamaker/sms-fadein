@@ -1,9 +1,11 @@
 use std::process::{Command};
-use std::env::args;
+use std::env::{ args, current_exe };
 use serde_json::{Value};
 use std::fs::read_to_string;
 
 fn main() {
+    let fadein_path = current_exe().unwrap();
+    let fadein_parent = fadein_path.parent().unwrap().to_str().unwrap();
     let args: Vec<String> = args().collect();
 
     let configuration_json: Value = serde_json::from_str(
@@ -32,7 +34,7 @@ fn main() {
     let _command = Command::new("./ffmpeg")
         .args([
             "-loop", "1",
-            "-i", "./thumbnail.png",
+            "-i", format!("{}/thumbnail.png", fadein_parent).as_str(),
             "-i", filename_arg,
             "-map", "0",
             "-map", "1:a",
@@ -45,9 +47,10 @@ fn main() {
             "-b:a", "320k",
             "-shortest",
             "-y",
-            "output.mp4"
+            format!("{}/output.mp4", fadein_parent).as_str()
         ])
-        .spawn();
+        .spawn()
+        .unwrap();
     // let process = Command::new("ffmpeg")
     //     .stdin(Stdio::piped())
     //     .spawn();
