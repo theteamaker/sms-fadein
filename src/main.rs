@@ -44,8 +44,7 @@ fn main() {
             "-preset", "ultrafast",
             "-tune", "stillimage",
             "-framerate", "1",
-            "-c:a", "aac",
-            "-b:a", "320k",
+            "-c:a", "copy",
             "-shortest",
             "-y",
             format!("{}/output.mp4", fadein_parent).as_str()
